@@ -3,7 +3,7 @@ dns.setServers(["1.1.1.1", "1.0.0.1", "8.8.8.8"]);
 
 require("dotenv").config();
 const express = require("express");
-const connectDB = require("./Config/mogoDB");
+const {connectDB} = require("./Config/mogoDB");
 const questionRouter = require("./Routes/generateQuestionRouter");
 const cors = require("cors");
 const dotenv = require("dotenv");
