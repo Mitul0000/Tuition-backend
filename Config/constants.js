@@ -1,0 +1,7 @@
+exports.constants = {
+  RAG_TOKEN_THRESHOLD: 50000,
+  CHUNK_SIZE: 1000,
+  CHUNK_OVERLAP: 150,
+  TOP_K: 10,
+  SESSION_EXPIRATION: 3600 * 6,
+}
