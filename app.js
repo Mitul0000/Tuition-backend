@@ -17,10 +17,14 @@ app.use(express.json());
 app.use("/api", questionRouter);
 app.use("/api", paperRoutes);
 
-const PORT = process.env.PORT;
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Tuition backend is running" });
+});
+
+const PORT = process.env.PORT || 8080;
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server is running on port ${PORT}`);
   });
 });
