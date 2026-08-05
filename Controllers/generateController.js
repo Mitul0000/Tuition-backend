@@ -5,7 +5,7 @@ const { retrieveRelevantChunks } = require("../Utils/Rag/retrieval");
 const { generateQuestions } = require("../Utils/generate");
 const { countTokens } = require("../Utils/tokenCounter");
 const { decideRoute } = require("../Utils/routing");
-const RagVector = require("../Models/ragVector");
+const RagVector = require("../Models/RagVector");
 const { constants } = require("../Config/constants");
 const crypto = require("crypto");
 
