@@ -6,7 +6,7 @@ const paperSchema = new mongoose.Schema(
     title: { type: String, required: true },
     metadata: {
       institutionName: String,
-      classLabel: String,
+      className: String,
       timeAllowed: String,
       totalMarks: Number,
       watermark: Boolean,
