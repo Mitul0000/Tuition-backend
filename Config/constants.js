@@ -4,4 +4,5 @@ exports.constants = {
   CHUNK_OVERLAP: 150,
   TOP_K: 10,
   SESSION_EXPIRATION: 3600 * 6,
+  EMBEDDING_DIMENSIONS: 768,
 }

@@ -1,29 +1,22 @@
-// Registry of renderers — one function per question type.
-// Each function receives ONE question object and returns the HTML
-// that goes BELOW the number/text/marks row (options, blank space, etc.)
+const { esc, renderText } = require("./mathRenderer");
+
 const questionTypeRenderers = {
   mcq: (question) => {
     if (!question.options || question.options.length === 0) return "";
     return `
       <div class="options">
         ${question.options
-          .map((option, i) => `<span class="option">${String.fromCharCode(97 + i)}) ${option}</span>`)
+          .map((option, i) => `<span class="option">${String.fromCharCode(97 + i)}) ${renderText(option)}</span>`)
           .join("")}
       </div>
     `;
   },
 
-  fillInTheBlank: () => {
-    return "";
-  },
+  fillInTheBlank: () => "",
 
-  shortAnswer: () => {
-    return "";
-  },
+  shortAnswer: () => "",
 
-  longAnswer: () => {
-  return "";
-  },
+  longAnswer: () => "",
 
   default: () => "",
 };
@@ -35,8 +28,8 @@ const renderQuestion = (question, type) => {
   return `
     <div class="question-block">
       <div class="question-row">
-        <span class="question-text"><strong>${question.number}.</strong> ${question.question}</span>
-        <span class="question-marks">${question.marks}</span>
+        <span class="question-text"><strong>${question.number}.</strong> ${renderText(question.question)}</span>
+        <span class="question-marks">${esc(question.marks)}</span>
       </div>
       ${bodyHTML}
     </div>
@@ -58,7 +51,11 @@ const renderSection = (section) => {
 
 exports.buildPaperHTML = (paperData) => {
   const { metadata, sections } = paperData;
-  const { institutionName, className, timeAllowed, watermark, totalMarks } = metadata;
+  const institutionName = esc(metadata.institutionName);
+  const className = esc(metadata.className);
+  const timeAllowed = esc(metadata.timeAllowed);
+  const totalMarks = metadata.totalMarks ? esc(metadata.totalMarks) : "";
+  const watermark = metadata.watermark;
 
   const sectionsHTML = sections.map(renderSection).join("");
 
@@ -71,6 +68,7 @@ exports.buildPaperHTML = (paperData) => {
     <html>
       <head>
         <meta charset="UTF-8" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css" />
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Bengali&family=Noto+Sans+Devanagari&display=swap');
 
@@ -143,7 +141,7 @@ exports.buildPaperHTML = (paperData) => {
 
           .question-block { margin-bottom: 16px; page-break-inside: avoid; }
           .question-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-          .question-text { flex: 1; }
+          .question-text { flex: 1; white-space: pre-wrap; }
           .question-marks {
             white-space: nowrap;
             font-weight: 600;
@@ -185,20 +183,14 @@ exports.buildPaperHTML = (paperData) => {
   `;
 };
 
-// Answer-sheet renderers — same registry pattern, different content per type
+const answerLine = (question) =>
+  `<div class="answer-text"><strong>Answer:</strong> ${renderText(question.answer)}</div>`;
+
 const answerTypeRenderers = {
-  mcq: (question) => {
-    return `<div class="answer-text"><strong>Answer:</strong> ${question.answer}</div>`;
-  },
-  shortAnswer: (question) => {
-    return `<div class="answer-text"><strong>Answer:</strong> ${question.answer}</div>`;
-  },
-  longAnswer: (question) => {
-    return `<div class="answer-text"><strong>Answer:</strong> ${question.answer}</div>`;
-  },
-  fillInTheBlank: (question) => {
-    return `<div class="answer-text"><strong>Answer:</strong> ${question.answer}</div>`;
-  },
+  mcq: answerLine,
+  shortAnswer: answerLine,
+  longAnswer: answerLine,
+  fillInTheBlank: answerLine,
   default: () => "",
 };
 
@@ -209,8 +201,8 @@ const renderAnswerQuestion = (question, type) => {
   return `
     <div class="question-block">
       <div class="question-row">
-        <span class="question-text"><strong>${question.number}.</strong> ${question.question}</span>
-        <span class="question-marks">${question.marks}</span>
+        <span class="question-text"><strong>${question.number}.</strong> ${renderText(question.question)}</span>
+        <span class="question-marks">${esc(question.marks)}</span>
       </div>
       ${answerHTML}
     </div>
@@ -232,7 +224,10 @@ const renderAnswerSection = (section) => {
 
 exports.buildAnswerSheetHTML = (paperData) => {
   const { metadata, sections } = paperData;
-  const { institutionName, className, timeAllowed, totalMarks } = metadata;
+  const institutionName = esc(metadata.institutionName);
+  const className = esc(metadata.className);
+  const timeAllowed = esc(metadata.timeAllowed);
+  const totalMarks = metadata.totalMarks ? esc(metadata.totalMarks) : "";
 
   const sectionsHTML = sections.map(renderAnswerSection).join("");
 
@@ -241,6 +236,7 @@ exports.buildAnswerSheetHTML = (paperData) => {
     <html>
       <head>
         <meta charset="UTF-8" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css" />
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Bengali&family=Noto+Sans+Devanagari&display=swap');
           * { box-sizing: border-box; }
@@ -267,12 +263,12 @@ exports.buildAnswerSheetHTML = (paperData) => {
           }
           .question-block { margin-bottom: 14px; page-break-inside: avoid; }
           .question-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-          .question-text { flex: 1; }
+          .question-text { flex: 1; white-space: pre-wrap; }
           .question-marks {
             white-space: nowrap; font-weight: 600; border: 1px solid #999; border-radius: 3px;
             padding: 1px 8px; font-size: 12px;
           }
-          .answer-text { margin: 4px 0 0 22px; color: #1a5c2e; font-size: 13px; }
+          .answer-text { margin: 4px 0 0 22px; color: #1a5c2e; font-size: 13px; white-space: pre-wrap; }
         </style>
       </head>
       <body>

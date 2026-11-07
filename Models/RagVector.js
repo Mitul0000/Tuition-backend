@@ -23,8 +23,7 @@ const vectorSchema = new mongoose.Schema({
   sessionId: {
     type: String,
     required: true,
-    unique: true,
-    index: true
+    unique: true
   },
   chunks: {
     type: [chunkSchema],
