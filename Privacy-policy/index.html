@@ -139,14 +139,19 @@
       </thead>
       <tbody>
         <tr>
-          <td>Google Firebase</td>
-          <td>Authentication, email verification, password reset, app backend</td>
-          <td>Email address, account identifiers</td>
+          <td>Google Firebase (Authentication and Firestore)</td>
+          <td>Sign-in, email verification, password reset, and storing your batches, students and payment records</td>
+          <td>Email address, account identifiers, batches, students, payments</td>
         </tr>
         <tr>
           <td>Our cloud server (hosted on Render)</td>
-          <td>Stores your account data and handles question generation and PDF creation</td>
-          <td>Batches, students, payments, saved papers, uploaded files during generation</td>
+          <td>Handles question generation and PDF creation</td>
+          <td>Uploaded files and your API key while a request is processed, generated papers</td>
+        </tr>
+        <tr>
+          <td>MongoDB Atlas</td>
+          <td>Stores papers you save, and temporary text extracted from your uploads while you generate questions</td>
+          <td>Saved papers, temporary text chunks and their numeric embeddings</td>
         </tr>
         <tr>
           <td>Google Gemini API</td>
@@ -159,7 +164,7 @@
   <p>Use of Google services is also subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>. Gemini API usage on your key is billed or limited under your own Google account terms.</p>
 
   <h2>4. AI question generator and uploaded files</h2>
-  <p>When you generate questions, the files you upload are sent securely to our server, which passes them to Google's Gemini API using the API key you provided. Generated questions are returned to your phone. After generation, the temporary session holding your upload is deleted from our server when you finish or leave the generator. Papers are stored permanently only if you tap save.</p>
+  <p>When you generate questions, the files you upload are sent securely to our server, which passes them to Google's Gemini API using the API key you provided. Generated questions are returned to your phone. For larger documents, we temporarily store text extracted from your upload, split into small pieces together with numeric embeddings, so that questions can be regenerated without uploading again. This temporary data is deleted when you finish or leave the generator, and in any case is removed automatically within 6 hours. Papers are stored permanently only if you tap save.</p>
   <p>Please do not upload material that contains sensitive personal information about students, and only upload content you have the right to use.</p>
 
   <h2>5. Student data and your responsibilities</h2>
